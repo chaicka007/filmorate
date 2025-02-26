@@ -13,10 +13,10 @@ import java.time.LocalDate;
 public class User {
     @EqualsAndHashCode.Exclude
     Integer id;
-    @EqualsAndHashCode.Exclude
     @NotNull
     @NonNull
     @NotBlank
+    @EqualsAndHashCode.Exclude
     String login;
     @EqualsAndHashCode.Exclude
     String name;
@@ -25,9 +25,9 @@ public class User {
     @EqualsAndHashCode.Exclude
     LocalDate birthday;
 
+    @Email
     @NotNull
     @NonNull
     @NotBlank
-    @Email
     String email;
 }
