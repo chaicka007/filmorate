@@ -11,25 +11,25 @@ public interface FilmStorage {
 
     List<Film> getFilms();
 
-    Film getFilm(Integer id);
+    Film getFilm(Long id);
 
     Film addFilm(Film film);
 
-    void addLike(Integer filmId, Integer userID);
+    void addLike(Long filmId, Long LongID);
 
-    void removeLike(Integer filmId, Integer userID);
+    void removeLike(Long filmId, Long userID);
 
-    HashMap<Integer, HashSet<Integer>> getLikes();
+    HashMap<Long, HashSet<Long>> getLikes();
 
-    Set<Integer> getLikesByFilmId(Integer filmId);
+    Set<Long> getLikesByFilmId(Long filmId);
 
-    Integer getLikesCount(Integer filmId);
+    Integer getLikesCount(Long filmId);
 
     Film updateFilm(Film film);
 
-    void deleteFilm(Integer id);
+    void deleteFilm(Long id);
 
     boolean contains(Film film);
 
-    boolean contains(Integer id);
+    boolean contains(Long id);
 }

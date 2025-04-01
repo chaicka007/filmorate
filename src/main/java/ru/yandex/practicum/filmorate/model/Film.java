@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class Film {
     @EqualsAndHashCode.Exclude
-    Integer id;
+    Long id;
 
     @NotNull
     @NonNull

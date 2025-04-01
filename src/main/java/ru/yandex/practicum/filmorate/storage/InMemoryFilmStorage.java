@@ -1,8 +1,7 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.ExceptionLocale;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotExistException;
+import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.ArrayList;
@@ -14,8 +13,8 @@ import java.util.Set;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-    private final Map<Integer, Film> films = new HashMap<>();
-    private final Map<Integer, HashSet<Integer>> likesPerFilm = new HashMap<>();
+    private final Map<Long, Film> films = new HashMap<>();
+    private final Map<Long, HashSet<Long>> likesPerFilm = new HashMap<>();
 
     @Override
     public List<Film> getFilms() {
@@ -23,7 +22,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilm(Integer id) {
+    public Film getFilm(Long id) {
         return films.get(id);
     }
 
@@ -35,45 +34,43 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void addLike(Integer filmId, Integer userID) {
+    public void addLike(Long filmId, Long userID) {
         likesPerFilm.get(filmId).add(userID);
     }
 
     @Override
-    public void removeLike(Integer filmId, Integer userID) {
+    public void removeLike(Long filmId, Long userID) {
         likesPerFilm.get(filmId).remove(userID);
     }
 
     @Override
-    public Set<Integer> getLikesByFilmId(Integer filmId) {
+    public Set<Long> getLikesByFilmId(Long filmId) {
         return new HashSet<>(likesPerFilm.get(filmId));
     }
 
     @Override
-    public HashMap<Integer, HashSet<Integer>> getLikes() {
+    public HashMap<Long, HashSet<Long>> getLikes() {
         return new HashMap<>(likesPerFilm);
     }
 
     @Override
-    public Integer getLikesCount(Integer filmId) {
+    public Integer getLikesCount(Long filmId) {
         return likesPerFilm.get(filmId).size();
     }
 
     @Override
     public Film updateFilm(Film film) {
         if (!films.containsKey(film.getId())) {
-            throw new FilmNotExistException(String.format(ExceptionLocale.FILM_NOT_EXIST_EXCEPTION.toString(),
-                    film.getId()));
+            throw new ObjectNotFoundException("Film");
         }
         films.put(film.getId(), film);
         return film;
     }
 
     @Override
-    public void deleteFilm(Integer id) {
+    public void deleteFilm(Long id) {
         if (!films.containsKey(id)) {
-            throw new FilmNotExistException(String.format(ExceptionLocale.FILM_NOT_EXIST_EXCEPTION.toString(),
-                    id));
+            throw new ObjectNotFoundException("Film");
         }
         likesPerFilm.remove(id);
         films.remove(id);
@@ -85,7 +82,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public boolean contains(Integer id) {
+    public boolean contains(Long id) {
         return films.containsKey(id);
     }
 }

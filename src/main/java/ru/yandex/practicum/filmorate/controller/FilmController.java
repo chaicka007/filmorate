@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
+import ru.yandex.practicum.filmorate.exceptions.BadRequestException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,6 +23,7 @@ import java.util.List;
 public class FilmController {
     private final FilmService filmService;
 
+    @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
@@ -42,21 +44,21 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public List<User> likeFilm(@PathVariable Integer id, @PathVariable Integer userId) {
-        return filmService.addLike(id,userId);
+    public void likeFilm(@PathVariable Long id, @PathVariable Long userId) {
+        filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public List<User> unlikeFilm(@PathVariable Integer id, @PathVariable Integer userId) {
-        return filmService.removeLike(id,userId);
+    public void unlikeFilm(@PathVariable Long id, @PathVariable Long userId) {
+        filmService.removeLike(id, userId);
     }
 
     @GetMapping("/popular")
     public List<Film> getPopularFilms(
             @RequestParam(defaultValue = "10", required = false) Integer size
     ) {
-        if (size <= 0){
-            throw new IncorrectParameterException("size");
+        if (size <= 0) {
+            throw new BadRequestException(new ArrayList<>(List.of("size")));
         }
         return filmService.getPopular(size);
     }

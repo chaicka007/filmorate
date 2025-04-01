@@ -8,22 +8,22 @@ public interface UserStorage {
 
     List<User> getUsers();
 
-    User getUser(Integer id);
+    User getUser(Long id);
 
-    List<Integer> getFriends(Integer id);
+    List<Long> getFriends(Long id);
 
-    void addFriend(Integer id, Integer friendID);
+    void addFriend(Long id, Long friendID);
 
-    void removeFriend(Integer id, Integer friendID);
+    void removeFriend(Long id, Long friendID);
 
     User addUser(User user);
 
     User updateUser(User user);
 
-    void deleteUser(Integer id);
+    void deleteUser(Long id);
 
     boolean contains(User user);
 
-    boolean contains(Integer id);
+    boolean contains(Long id);
 
 }

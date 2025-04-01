@@ -1,8 +1,7 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.ExceptionLocale;
-import ru.yandex.practicum.filmorate.exceptions.UserNotExistException;
+import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.ArrayList;
@@ -14,8 +13,8 @@ import java.util.Set;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    private final Map<Integer, User> users = new HashMap<>();
-    private final Map<Integer, Set<Integer>> friendsPerUser = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
+    private final Map<Long, Set<Long>> friendsPerUser = new HashMap<>();
 
     @Override
     public List<User> getUsers() {
@@ -23,23 +22,23 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUser(Integer id) {
+    public User getUser(Long id) {
         return users.get(id);
     }
 
     @Override
-    public List<Integer> getFriends(Integer id) {
+    public List<Long> getFriends(Long id) {
         return new ArrayList<>(friendsPerUser.get(id));
     }
 
     @Override
-    public void addFriend(Integer id, Integer friendID) {
+    public void addFriend(Long id, Long friendID) {
         friendsPerUser.get(id).add(friendID);
         friendsPerUser.get(friendID).add(id);
     }
 
     @Override
-    public void removeFriend(Integer id, Integer friend) {
+    public void removeFriend(Long id, Long friend) {
         friendsPerUser.get(id).remove(friend);
         friendsPerUser.get(friend).remove(id);
     }
@@ -54,20 +53,18 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User updateUser(User user) {
         if (!users.containsKey(user.getId())) {
-            throw new UserNotExistException(String.format(ExceptionLocale.USER_NOT_EXIST_EXCEPTION.toString(),
-                    user.getId()));
+            throw new ObjectNotFoundException("User");
         }
         users.put(user.getId(), user);
         return user;
     }
 
     @Override
-    public void deleteUser(Integer id) {
+    public void deleteUser(Long id) {
         if (!users.containsKey(id)) {
-            throw new UserNotExistException(String.format(ExceptionLocale.USER_NOT_EXIST_EXCEPTION.toString(),
-                    id));
+            throw new ObjectNotFoundException("User");
         }
-        for (Integer friendsId : friendsPerUser.get(id)) {
+        for (Long friendsId : friendsPerUser.get(id)) {
             friendsPerUser.get(friendsId).remove(id); //Удаляем пользователя у всех его друзей из друзей
         }
         friendsPerUser.remove(id);
@@ -80,7 +77,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public boolean contains(Integer id) {
+    public boolean contains(Long id) {
         return users.containsKey(id);
     }
 }
